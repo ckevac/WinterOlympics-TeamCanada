@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Canada - 2026 Winter Olympics Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -13,7 +14,7 @@
             --silver: #C0C0C0;
             --bronze: #CD7F32;
             --bg-dark: #0a0e14;
-            --card-bg: rgba(36, 36, 36, 0.9);
+            --card-bg: rgba(30, 30, 30, 0.85);
             --ticker-bg: #050505;
         }
 
@@ -21,46 +22,44 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* High-reliability Alpine Background */
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://images.unsplash.com/photo-1551811635-be0219467651?auto=format&fit=crop&q=80&w=2000');
+                        url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000');
             background-size: cover;
             background-attachment: fixed;
+            background-position: center;
             color: white;
             padding-bottom: 70px;
         }
 
-        /* Watermark Background */
+        /* Large Maple Leaf Watermark */
         body::before {
-            content: "\f0fb"; /* FontAwesome Leaf */
+            content: "\f0fb"; 
             font-family: "Font Awesome 5 Free";
             font-weight: 900;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 60vw;
-            color: rgba(255, 0, 0, 0.03);
+            font-size: 50vw;
+            color: rgba(255, 0, 0, 0.04);
             z-index: -1;
             pointer-events: none;
         }
 
-        /* Header */
         .header {
             background: linear-gradient(90deg, var(--canada-red) 0%, var(--canada-dark) 50%, var(--canada-red) 100%);
             padding: 15px 0;
             text-align: center;
             box-shadow: 0 4px 20px rgba(255, 0, 0, 0.4);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            position: sticky; top: 0; z-index: 1000;
         }
 
         #countdown-timer {
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             display: inline-block;
             padding: 4px 18px;
             border-radius: 20px;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: monospace;
             font-weight: bold;
             margin-top: 8px;
             color: var(--gold);
@@ -73,7 +72,7 @@
 
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -94,12 +93,12 @@
         .ticker {
             display: inline-block; height: 50px; line-height: 50px;
             white-space: nowrap; padding-right: 100%;
-            /* Slowed to 120s for extra readability */
-            animation: ticker-animation 120s linear infinite;
+            /* Ultra-slow: 180 seconds per loop */
+            animation: ticker-animation 180s linear infinite;
         }
 
         .ticker-item {
-            display: inline-block; padding: 0 80px; font-size: 1.05em;
+            display: inline-block; padding: 0 100px; font-size: 1.1em;
             font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
         }
 
@@ -115,7 +114,7 @@
             align-items: center; padding: 10px; margin: 5px 0;
             background: rgba(255,255,255,0.05); border-radius: 8px;
         }
-        .is-canada { background: rgba(255, 0, 0, 0.2); border: 1px solid var(--canada-red); font-weight: bold; }
+        .is-canada { background: rgba(255, 0, 0, 0.2); border: 1.5px solid var(--canada-red); }
         .medal-cols { display: flex; justify-content: space-between; font-weight: bold; }
         .medal-cols span { width: 40px; text-align: center; }
 
@@ -127,11 +126,6 @@
 
         @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
         .flash-update { color: #00ff00 !important; transform: scale(1.1); text-shadow: 0 0 10px #00ff00; }
-
-        @media (max-width: 768px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .full-width { grid-column: span 1; }
-        }
     </style>
 </head>
 <body>
@@ -169,17 +163,17 @@
                         <strong>Flag Bearers</strong><br><small>Mikaël Kingsbury & Marielle Thompson</small>
                     </div>
                     <div style="padding:10px; border-left:4px solid var(--silver); margin-bottom:10px; background:rgba(255,255,255,0.03)">
-                        <strong>Roster Update</strong><br><small>207 Canadian athletes named to the team</small>
+                        <strong>Roster Finalized</strong><br><small>207 athletes ready for Italy</small>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h3><i class="fas fa-hockey-puck"></i> Next Major Event</h3>
+                <h3><i class="fas fa-hockey-puck"></i> Key Matchup</h3>
                 <div style="padding:15px; text-align:center; background:rgba(0,0,0,0.2); border-radius:10px;">
                     <h4 style="color:var(--gold)">Feb 11 - Men's Hockey</h4>
                     <p>Canada vs Switzerland</p>
-                    <small>Opening Group Stage</small>
+                    <small>Group Stage Opener</small>
                 </div>
             </div>
 
@@ -192,11 +186,12 @@
 
     <div class="ticker-wrap">
         <div class="ticker" id="ticker-content">
-            <div class="ticker-item"><i class="fas fa-sync fa-spin"></i> Syncing with Olympic News Feed...</div>
+            <div class="ticker-item"><i class="fas fa-sync fa-spin"></i> Syncing Headlines...</div>
         </div>
     </div>
 
     <script>
+        // Start all medals at zero
         let leaderboard = [
             { name: "Norway", code: "🇳🇴", gold: 0, silver: 0, bronze: 0 },
             { name: "USA", code: "🇺🇸", gold: 0, silver: 0, bronze: 0 },
@@ -223,7 +218,7 @@
             const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
             document.getElementById("countdown-timer").innerText = 
-                `Opening Ceremony: ${days}d ${hours}h ${mins}m ${secs}s`;
+                `Opening: ${days}d ${hours}h ${mins}m ${secs}s`;
         }
 
         async function updateNewsTicker() {
@@ -232,7 +227,7 @@
                 const response = await fetch(API_PROXY);
                 const data = await response.json();
                 if (data.status === 'ok') {
-                    const headlines = data.items.slice(0, 10).map(item => {
+                    const headlines = data.items.slice(0, 8).map(item => {
                         return `<div class="ticker-item"><i class="fas fa-bolt"></i> ${item.title.split(' - ')[0]}</div>`;
                     }).join('');
                     ticker.innerHTML = headlines + headlines;
@@ -269,9 +264,9 @@
         setInterval(updateCountdown, 1000);
         setInterval(updateNewsTicker, 600000);
         
-        // Random "New Medal" Simulation
+        // Slower Medal Simulation (Check every 60 seconds)
         setInterval(() => {
-            if (Math.random() > 0.95) {
+            if (Math.random() > 0.98) { // Very low chance until games start
                 const types = ['gold', 'silver', 'bronze'];
                 const won = types[Math.floor(Math.random() * 3)];
                 leaderboard.find(c => c.isCanada)[won]++;
@@ -279,7 +274,7 @@
                 el.classList.add('flash-update');
                 setTimeout(() => { renderLeaderboard(); el.classList.remove('flash-update'); }, 2000);
             }
-        }, 20000);
+        }, 60000);
     </script>
 </body>
 </html>
