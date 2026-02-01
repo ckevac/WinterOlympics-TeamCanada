@@ -24,13 +24,13 @@
             background: linear-gradient(135deg, var(--bg-dark) 0%, #2d2d2d 100%);
             color: white;
             line-height: 1.6;
-            padding-bottom: 70px; /* Space for ticker */
+            padding-bottom: 70px;
         }
 
-        /* Header */
+        /* Header & Countdown */
         .header {
             background: linear-gradient(90deg, var(--canada-red) 0%, var(--canada-dark) 50%, var(--canada-red) 100%);
-            padding: 20px 0;
+            padding: 15px 0;
             text-align: center;
             box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
             position: sticky;
@@ -38,7 +38,19 @@
             z-index: 1000;
         }
 
-        .header h1 { font-size: 2em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); letter-spacing: 1px; }
+        .header h1 { font-size: 1.8em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+
+        #countdown-timer {
+            background: rgba(0,0,0,0.3);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-family: monospace;
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 1.1em;
+            color: var(--gold);
+        }
 
         /* Layout */
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
@@ -52,25 +64,23 @@
             padding: 20px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
             border-top: 3px solid var(--canada-red);
-            transition: transform 0.2s ease;
         }
 
-        /* Medals Display */
         .medal-count-display { display: flex; justify-content: space-around; gap: 15px; margin-top: 15px; }
         .medal-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center; flex: 1; }
-        .medal-num { font-size: 2.8em; font-weight: 800; display: block; transition: all 0.4s ease; }
+        .medal-num { font-size: 2.8em; font-weight: 800; display: block; }
 
-        /* Leaderboard Table */
+        /* Leaderboard */
         .leader-row {
             display: grid; grid-template-columns: 45px 1fr 160px;
-            align-items: center; padding: 12px; margin: 6px 0;
+            align-items: center; padding: 10px; margin: 5px 0;
             background: rgba(255,255,255,0.03); border-radius: 8px;
         }
         .is-canada { background: rgba(255, 0, 0, 0.15); border: 1.5px solid var(--canada-red); }
         .medal-cols { display: flex; justify-content: space-between; font-weight: bold; }
         .medal-cols span { width: 40px; text-align: center; }
 
-        /* Real-Time News Ticker */
+        /* Slow News Ticker */
         .ticker-wrap {
             position: fixed; bottom: 0; width: 100%; overflow: hidden;
             height: 50px; background-color: var(--ticker-bg);
@@ -80,37 +90,35 @@
         .ticker {
             display: inline-block; height: 50px; line-height: 50px;
             white-space: nowrap; padding-right: 100%;
-            animation: ticker-animation 40s linear infinite;
+            /* Increased duration to 80s for a much slower, readable pace */
+            animation: ticker-animation 80s linear infinite;
         }
 
         .ticker-item {
-            display: inline-block; padding: 0 40px; font-size: 0.95em;
-            font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+            display: inline-block; padding: 0 60px; font-size: 1em;
+            font-weight: 600; text-transform: uppercase;
         }
 
-        .ticker-item i { color: var(--canada-red); margin-right: 10px; }
+        .ticker-item i { color: var(--canada-red); margin-right: 12px; }
 
         @keyframes ticker-animation {
             0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(-100%, 0, 0); }
         }
 
-        /* Live Indicator */
         .live-pulse {
             height: 10px; width: 10px; background-color: #00ff00;
             border-radius: 50%; display: inline-block; margin-right: 8px;
-            box-shadow: 0 0 8px #00ff00; animation: pulse 1.5s infinite;
+            animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
-        .flash-update { color: #00ff00 !important; transform: scale(1.3); text-shadow: 0 0 15px #00ff00; }
+        .flash-update { color: #00ff00 !important; transform: scale(1.2); text-shadow: 0 0 10px #00ff00; }
 
-        /* Responsive Mobile Styling */
         @media (max-width: 768px) {
             .dashboard-grid { grid-template-columns: 1fr; }
             .full-width { grid-column: span 1; }
             .medal-count-display { flex-direction: column; }
-            .header h1 { font-size: 1.5em; }
         }
     </style>
 </head>
@@ -118,14 +126,13 @@
 
     <div class="header">
         <h1><i class="fas fa-leaf"></i> TEAM CANADA 2026</h1>
-        <p><span class="live-pulse"></span> LIVE FROM MILANO CORTINA</p>
+        <div id="countdown-timer">Opening Ceremony: 00d 00h 00m 00s</div>
     </div>
 
     <div class="container">
         <div class="dashboard-grid">
-            
             <div class="card full-width">
-                <h3 align="center"><i class="fas fa-medal"></i> National Medal Count</h3>
+                <h3 align="center"><span class="live-pulse"></span> National Medal Count</h3>
                 <div class="medal-count-display">
                     <div class="medal-box" style="border-bottom: 4px solid var(--gold)">
                         <span class="medal-num" id="gold-count">0</span>
@@ -143,7 +150,7 @@
             </div>
 
             <div class="card">
-                <h3><i class="far fa-calendar-alt"></i> Today's Key Events</h3>
+                <h3><i class="far fa-calendar-alt"></i> Key Events</h3>
                 <div id="event-list">
                     <div style="padding:10px; border-left:4px solid var(--canada-red); margin-bottom:10px; background:rgba(255,255,255,0.03)">
                         <strong>Feb 12, 10:40 ET</strong> - Men's Hockey<br><small>Canada vs Czechia</small>
@@ -152,16 +159,16 @@
             </div>
 
             <div class="card">
-                <h3><i class="fas fa-bullhorn"></i> Team Highlights</h3>
+                <h3><i class="fas fa-bullhorn"></i> Highlights</h3>
                 <div id="recent-list">
                     <div style="padding:10px; border-left:4px solid var(--gold); margin-bottom:10px; background:rgba(255,255,255,0.03)">
-                        <strong>Flag Bearers</strong><br><small>M. Kingsbury & M. Thompson</small>
+                        <strong>Milano 2026</strong><br><small>Harmony & Beauty in Action</small>
                     </div>
                 </div>
             </div>
 
             <div class="card full-width">
-                <h3><i class="fas fa-globe-americas"></i> Global Standings (Sorted by Gold)</h3>
+                <h3><i class="fas fa-globe-americas"></i> Global Rankings</h3>
                 <div id="leaderboard-table"></div>
             </div>
         </div>
@@ -169,12 +176,12 @@
 
     <div class="ticker-wrap">
         <div class="ticker" id="ticker-content">
-            <div class="ticker-item">Initializing Live News Feed...</div>
+            <div class="ticker-item">Fetching the latest headlines from Team Canada...</div>
         </div>
     </div>
 
     <script>
-        // --- DATA & NEWS CONFIG ---
+        // --- DATA ---
         let leaderboard = [
             { name: "Norway", code: "🇳🇴", gold: 0, silver: 0, bronze: 0 },
             { name: "USA", code: "🇺🇸", gold: 0, silver: 0, bronze: 0 },
@@ -183,35 +190,50 @@
             { name: "Italy", code: "🇮🇹", gold: 0, silver: 0, bronze: 0 }
         ];
 
-        // Google News RSS via RSS2JSON Proxy
         const RSS_URL = "https://news.google.com/rss/search?q=Team+Canada+Olympics+2026&hl=en-CA&gl=CA&ceid=CA:en";
         const API_PROXY = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
 
+        // --- COUNTDOWN LOGIC ---
+        function updateCountdown() {
+            // Opening Ceremony: Feb 6, 2026, 20:00 CET (14:00 EST)
+            const ceremonyDate = new Date("February 6, 2026 14:00:00 EST").getTime();
+            const now = new Date().getTime();
+            const diff = ceremonyDate - now;
+
+            if (diff <= 0) {
+                document.getElementById("countdown-timer").innerText = "THE GAMES HAVE BEGUN!";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown-timer").innerText = 
+                `Opening: ${days}d ${hours}h ${mins}m ${secs}s`;
+        }
+
+        // --- NEWS LOGIC ---
         async function updateNewsTicker() {
             const ticker = document.getElementById('ticker-content');
             try {
                 const response = await fetch(API_PROXY);
                 const data = await response.json();
-                
                 if (data.status === 'ok') {
-                    // Filter and clean headlines
-                    const headlines = data.items.slice(0, 8).map(item => {
-                        const cleanTitle = item.title.split(' - ')[0]; // Remove source name
+                    const headlines = data.items.slice(0, 10).map(item => {
+                        const cleanTitle = item.title.split(' - ')[0];
                         return `<div class="ticker-item"><i class="fas fa-bolt"></i> ${cleanTitle}</div>`;
                     }).join('');
-                    
-                    // Double the content for a seamless loop
                     ticker.innerHTML = headlines + headlines;
                 }
             } catch (e) {
-                ticker.innerHTML = `<div class="ticker-item">Live News Standby... Check back soon for updates.</div>`;
+                ticker.innerHTML = `<div class="ticker-item">Check back for live headlines...</div>`;
             }
         }
 
         function renderLeaderboard() {
-            // Olympic Sorting: Gold > Silver > Bronze
             leaderboard.sort((a, b) => (b.gold - a.gold) || (b.silver - a.silver) || (b.bronze - a.bronze));
-            
             const table = document.getElementById('leaderboard-table');
             table.innerHTML = leaderboard.map((country, i) => `
                 <div class="leader-row ${country.isCanada ? 'is-canada' : ''}">
@@ -226,39 +248,29 @@
                 </div>
             `).join('');
 
-            // Update Top Counter
             const ca = leaderboard.find(c => c.isCanada);
             document.getElementById('gold-count').innerText = ca.gold;
             document.getElementById('silver-count').innerText = ca.silver;
             document.getElementById('bronze-count').innerText = ca.bronze;
         }
 
-        // --- SIMULATED "BREAKING" UPDATES ---
-        function simulateMedal() {
-            // 15% chance to "win" a medal every 12 seconds for the simulation feel
-            if (Math.random() > 0.85) {
-                const types = ['gold', 'silver', 'bronze'];
-                const won = types[Math.floor(Math.random() * 3)];
-                const ca = leaderboard.find(c => c.isCanada);
-                ca[won]++;
-
-                const el = document.getElementById(`${won}-count`);
-                el.classList.add('flash-update');
-                
-                setTimeout(() => {
-                    renderLeaderboard();
-                    el.classList.remove('flash-update');
-                }, 1500);
-            }
-        }
-
-        // --- START DASHBOARD ---
+        // --- INITIALIZE ---
         renderLeaderboard();
         updateNewsTicker();
+        setInterval(updateCountdown, 1000);
+        setInterval(updateNewsTicker, 600000);
         
-        // Refresh intervals
-        setInterval(updateNewsTicker, 600000); // News every 10 mins
-        setInterval(simulateMedal, 12000);      // Medal check every 12 secs
+        // Random "New Medal" Simulation
+        setInterval(() => {
+            if (Math.random() > 0.9) {
+                const types = ['gold', 'silver', 'bronze'];
+                const won = types[Math.floor(Math.random() * 3)];
+                leaderboard.find(c => c.isCanada)[won]++;
+                const el = document.getElementById(`${won}-count`);
+                el.classList.add('flash-update');
+                setTimeout(() => { renderLeaderboard(); el.classList.remove('flash-update'); }, 1500);
+            }
+        }, 15000);
     </script>
 </body>
 </html>
