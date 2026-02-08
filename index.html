@@ -13,7 +13,6 @@
             --gold: #FFD700;
             --silver: #C0C0C0;
             --bronze: #CD7F32;
-            --bg-dark: #0a0e14;
             --card-bg: rgba(25, 25, 25, 0.92);
             --ticker-bg: #050505;
         }
@@ -50,6 +49,17 @@
             position: sticky; top: 0; z-index: 1000;
         }
 
+        /* Maple Leaf Animation */
+        .fa-canadian-maple-leaf {
+            animation: leaf-glow 3s infinite ease-in-out;
+            margin-right: 10px;
+        }
+
+        @keyframes leaf-glow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px white); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
+        }
+
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
         .card {
@@ -63,7 +73,7 @@
         }
 
         .medal-count-display { display: flex; justify-content: space-around; gap: 15px; margin-top: 25px; }
-        .medal-box { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 10px; text-align: center; flex: 1; border: 1px solid rgba(255,255,255,0.08); transition: 0.3s; }
+        .medal-box { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 10px; text-align: center; flex: 1; border: 1px solid rgba(255,255,255,0.08); }
         .medal-num { font-size: 4em; font-weight: 900; display: block; line-height: 1; margin-bottom: 8px; }
 
         .ticker-wrap {
@@ -109,7 +119,7 @@
     </div>
 
     <div class="header">
-        <h1><i class="fas fa-leaf"></i> TEAM CANADA 2026</h1>
+        <h1><i class="fab fa-canadian-maple-leaf"></i> TEAM CANADA 2026</h1>
     </div>
 
     <div class="container">
@@ -149,7 +159,6 @@
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA35YvUF3vcnonTTI7Eh53EmiqWdrP_0Kcwwb0BRjmmLrzdsS7UHF8fGQtekliVVw1Z1SKj0P4eS2U/pub?gid=0&single=true&output=csv";
         const RSS_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent("https://news.google.com/rss/search?q=Team+Canada+Olympics+2026&hl=en-CA&gl=CA&ceid=CA:en")}`;
 
-        // Create Custom Favicon (🇨🇦 + 🥇)
         function createFavicon() {
             const canvas = document.createElement('canvas');
             canvas.width = 32; canvas.height = 32;
@@ -214,13 +223,12 @@
                         }
                     });
                 }
-                
                 document.getElementById('sync-time').innerText = new Date().toLocaleTimeString();
             } catch (err) { console.error("Sync Error:", err); }
         }
 
         function getFlag(name) {
-            const f = {"Canada":"🇨🇦","Italy":"🇮🇹","Norway":"🇳🇴","Japan":"🇯🇵","Sweden":"🇸🇪","USA":"🇺🇸","Germany":"🇩🇪","Switzerland":"🇨🇭","China":"🇨🇳","France":"🇫🇷","Netherlands":"🇳🇱"};
+            const f = {"Canada":"🇨🇦","Italy":"🇮🇹","Norway":"🇳🇴","Japan":"🇯🇵","Sweden":"🇸🇪","USA":"🇺🇸","Germany":"🇩🇪","Switzerland":"🇨🇭","China":"🇨🇳","France":"🇫🇷"};
             return f[Object.keys(f).find(k => name.includes(k))] || "🏳️";
         }
 
@@ -236,12 +244,11 @@
             } catch (e) { ticker.innerHTML = `<div class="ticker-item">Awaiting Live News Feed...</div>`; }
         }
 
-        // Run
         createFavicon();
         fetchLiveMedals();
         updateNewsTicker();
-        setInterval(fetchLiveMedals, 300000); // Medal Refresh (5 min)
-        setInterval(updateNewsTicker, 600000); // News Refresh (10 min)
+        setInterval(fetchLiveMedals, 300000);
+        setInterval(updateNewsTicker, 600000);
     </script>
 </body>
 </html>
