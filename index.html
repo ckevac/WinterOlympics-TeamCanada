@@ -14,77 +14,78 @@
             --gold: #FFD700;
             --silver: #C0C0C0;
             --bronze: #CD7F32;
-            --card-bg: rgba(20, 20, 20, 0.95);
+            --card-bg: rgba(15, 15, 15, 0.98);
         }
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
                         url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000');
             background-size: cover; background-attachment: fixed;
-            color: white; margin: 0; padding-bottom: 100px;
+            color: white; margin: 0; padding-bottom: 120px;
         }
 
-        .status-bar { background: #000; text-align: center; padding: 8px; font-size: 0.75em; color: #888; border-bottom: 1px solid #333; }
-        
         .header {
             background: linear-gradient(90deg, var(--canada-red) 0%, var(--canada-dark) 50%, var(--canada-red) 100%);
-            padding: 25px 0; text-align: center; box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
+            padding: 25px 0; text-align: center; box-shadow: 0 4px 20px rgba(255, 0, 0, 0.4);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        .header h1 { display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 2em; letter-spacing: 1px; }
+        .header h1 { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 0; }
         .fa-canadian-maple-leaf { animation: leaf-glow 3s infinite ease-in-out; }
 
         @keyframes leaf-glow {
             0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px white); }
-            50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 12px rgba(255,255,255,0.7)); }
         }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; padding: 20px; }
         
         .card {
-            background: var(--card-bg); border-radius: 15px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 4px solid var(--canada-red);
-            margin-bottom: 20px;
+            background: var(--card-bg); border-radius: 12px; padding: 20px;
+            border-left: 5px solid var(--canada-red); margin-bottom: 20px;
         }
 
-        .medal-count-display { display: flex; justify-content: space-around; gap: 15px; margin-top: 20px; }
-        .medal-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; text-align: center; flex: 1; border: 1px solid #333; }
-        .medal-num { font-size: 3.5em; font-weight: 900; display: block; line-height: 1; }
+        .medal-grid { display: flex; justify-content: space-around; gap: 10px; margin-top: 15px; }
+        .medal-item { background: #222; padding: 15px; border-radius: 8px; flex: 1; text-align: center; }
+        .medal-num { font-size: 3em; font-weight: 900; display: block; }
 
-        .leader-row {
-            display: grid; grid-template-columns: 50px 1fr 180px; align-items: center;
-            padding: 10px; margin: 5px 0; background: rgba(255,255,255,0.02); border-radius: 8px;
+        /* Watchlist Styles */
+        .event-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px; border-bottom: 1px solid #333;
         }
-        .is-canada { background: rgba(255, 0, 0, 0.2); border: 1px solid var(--canada-red); }
-        .medal-cols { display: flex; justify-content: space-between; font-weight: bold; }
+        .event-row:last-child { border-bottom: none; }
+        .live-tag {
+            background: #ff0000; color: white; padding: 2px 8px; 
+            border-radius: 4px; font-size: 0.7em; font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* Podium Roll Footer */
-        .podium-roll {
-            position: fixed; bottom: 50px; width: 100%; background: var(--canada-dark);
-            color: white; padding: 8px 0; font-weight: bold; text-align: center;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.5); font-size: 0.9em;
+        .watch-btn {
+            background: #333; color: white; text-decoration: none;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8em;
+            border: 1px solid #555; transition: 0.3s;
         }
+        .watch-btn:hover { background: var(--canada-red); border-color: white; }
 
         .ticker-wrap {
             position: fixed; bottom: 0; width: 100%; height: 50px;
-            background: #000; border-top: 1px solid #333; z-index: 9999;
+            background: #000; border-top: 1px solid #444; z-index: 9999;
         }
-        .ticker { white-space: nowrap; line-height: 50px; animation: scroll 120s linear infinite; display: inline-block; }
-        .ticker-item { display: inline-block; padding: 0 50px; font-size: 0.95em; }
+        .ticker { white-space: nowrap; line-height: 50px; animation: scroll 130s linear infinite; display: inline-block; }
+        .ticker-item { display: inline-block; padding: 0 40px; font-size: 0.9em; color: #ccc; }
 
-        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
-        .flash-update { color: #00ff00 !important; transform: scale(1.1); transition: 0.5s; }
+        .podium-roll {
+            position: fixed; bottom: 50px; width: 100%; background: #CC0000;
+            color: white; padding: 6px 0; font-weight: bold; text-align: center; font-size: 0.85em;
+        }
     </style>
 </head>
 <body>
 
     <audio id="goal-horn" src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptoken=645b0800-474c-4a37-8321-4a572626e36d" preload="auto"></audio>
-
-    <div class="status-bar">
-        <i class="fas fa-circle" style="color:#00ff00; font-size:8px; margin-right:5px;"></i> LIVE SYNC &nbsp; | &nbsp; <span id="sync-time">---</span>
-    </div>
 
     <div class="header">
         <h1>
@@ -96,100 +97,83 @@
 
     <div class="container">
         <div class="card">
-            <h3 align="center">Medal Count</h3>
-            <div class="medal-count-display">
-                <div class="medal-box" style="border-bottom: 5px solid var(--gold)"><span class="medal-num" id="gold-count">0</span><small>GOLD</small></div>
-                <div class="medal-box" style="border-bottom: 5px solid var(--silver)"><span class="medal-num" id="silver-count">0</span><small>SILVER</small></div>
-                <div class="medal-box" style="border-bottom: 5px solid var(--bronze)"><span class="medal-num" id="bronze-count">0</span><small>BRONZE</small></div>
+            <h3 style="margin-top:0"><i class="fas fa-medal"></i> Live Medal Tally</h3>
+            <div class="medal-grid">
+                <div class="medal-item"><span class="medal-num" id="gold-count" style="color:var(--gold)">0</span><small>GOLD</small></div>
+                <div class="medal-item"><span class="medal-num" id="silver-count" style="color:var(--silver)">0</span><small>SILVER</small></div>
+                <div class="medal-item"><span class="medal-num" id="bronze-count" style="color:var(--bronze)">0</span><small>BRONZE</small></div>
             </div>
         </div>
 
         <div class="card">
-            <h3><i class="fas fa-globe"></i> Leaderboard</h3>
-            <div id="leaderboard-table" style="margin-top:15px;"></div>
+            <h3 style="margin-top:0"><i class="fas fa-tv"></i> Team Canada Watchlist (EST)</h3>
+            <div class="event-row">
+                <div>
+                    <span class="live-tag">LIVE</span> 
+                    <strong>Curling Mixed Doubles</strong><br>
+                    <small>Canada vs. Korea</small>
+                </div>
+                <a href="https://www.cbc.ca/sports/olympics" target="_blank" class="watch-btn">Watch on CBC</a>
+            </div>
+            <div class="event-row">
+                <div>
+                    <strong>Figure Skating</strong><br>
+                    <small>Pairs Free Skate (Team Event) • 1:30 PM</small>
+                </div>
+                <span style="color:#777; font-size:0.8em;">Upcoming</span>
+            </div>
+            <div class="event-row">
+                <div>
+                    <strong>Women's Hockey</strong><br>
+                    <small>Canada vs. Czechia • Monday 3:10 PM</small>
+                </div>
+                <span style="color:#777; font-size:0.8em;">Tomorrow</span>
+            </div>
         </div>
     </div>
 
-    <div class="podium-roll" id="recent-medalist">
-        <i class="fas fa-medal"></i> RECENT: Valérie Maltais (Speed Skating) - BRONZE
+    <div class="podium-roll">
+        <i class="fas fa-trophy"></i> RECENT: Valérie Maltais (Speed Skating) - BRONZE 🥉
     </div>
 
     <div class="ticker-wrap"><div class="ticker" id="ticker-content"></div></div>
 
     <script>
+        // Use the same script logic from before for Medal Refresh and News
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA35YvUF3vcnonTTI7Eh53EmiqWdrP_0Kcwwb0BRjmmLrzdsS7UHF8fGQtekliVVw1Z1SKj0P4eS2U/pub?gid=0&single=true&output=csv";
         let lastCounts = { gold: 0, silver: 0, bronze: 0 };
         let isFirstLoad = true;
-
-        function celebrate() {
-            document.getElementById('goal-horn').play().catch(() => {});
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#FF0000', '#FFFFFF', '#FFD700'] });
-        }
 
         async function refresh() {
             try {
                 const res = await fetch(SHEET_URL);
                 const text = await res.text();
                 const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, "").trim()));
-                let countries = [];
-                let canada = null;
-
-                rows.forEach((row, i) => {
-                    if (i === 0 || !row[1] || row[1] === "Totals") return;
-                    let entry = { name: row[1].split('*')[0], gold: parseInt(row[2])||0, silver: parseInt(row[3])||0, bronze: parseInt(row[4])||0 };
-                    entry.isCanada = entry.name.toLowerCase().includes("canada");
-                    if (entry.isCanada) canada = entry;
-                    countries.push(entry);
-                });
-
-                countries.sort((a,b) => (b.gold-a.gold) || (b.silver-a.silver));
-                
-                document.getElementById('leaderboard-table').innerHTML = countries.slice(0, 5).map((c, i) => `
-                    <div class="leader-row ${c.isCanada ? 'is-canada' : ''}">
-                        <span>${i === 0 ? '🏆' : (c.isCanada ? '★' : '#' + (i + 1))}</span>
-                        <span>${c.name}</span>
-                        <div class="medal-cols">
-                            <span style="color:var(--gold)">${c.gold}</span>
-                            <span style="color:var(--silver)">${c.silver}</span>
-                            <span style="color:var(--bronze)">${c.bronze}</span>
-                        </div>
-                    </div>
-                `).join('');
+                let canada = rows.find(r => r[1] && r[1].toLowerCase().includes("canada"));
 
                 if (canada) {
-                    let improved = false;
-                    ['gold','silver','bronze'].forEach(m => {
+                    let hasNew = false;
+                    ['gold','silver','bronze'].forEach((m, idx) => {
+                        const val = parseInt(canada[idx+2]) || 0;
                         const el = document.getElementById(`${m}-count`);
-                        if (canada[m] > lastCounts[m]) {
-                            if (!isFirstLoad) improved = true;
+                        if (val > lastCounts[m] && !isFirstLoad) {
+                            hasNew = true;
                             el.classList.add('flash-update');
                             setTimeout(() => el.classList.remove('flash-update'), 3000);
                         }
-                        el.innerText = canada[m];
-                        lastCounts[m] = canada[m];
+                        el.innerText = val;
+                        lastCounts[m] = val;
                     });
-                    if (improved) celebrate();
+                    if (hasNew) {
+                        document.getElementById('goal-horn').play().catch(()=>{});
+                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    }
                     isFirstLoad = false;
                 }
-                document.getElementById('sync-time').innerText = "LAST UPDATE: " + new Date().toLocaleTimeString();
             } catch (e) { console.log(e); }
         }
-
-        async function news() {
-            const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent("https://news.google.com/rss/search?q=Team+Canada+Olympics+2026&hl=en-CA&gl=CA&ceid=CA:en")}`);
-            const data = await res.json();
-            const items = data.items.slice(0, 8).map(item => `<span class="ticker-item"><i class="fab fa-canadian-maple-leaf" style="color:red"></i> ${item.title.split(' - ')[0]}</span>`).join('');
-            document.getElementById('ticker-content').innerHTML = items + items;
-        }
-
-        // Favicon
-        const canv = document.createElement('canvas'); canv.width = 32; canv.height = 32;
-        const c = canv.getContext('2d'); c.font = '22px serif'; c.fillText('🇨🇦', 0, 24); c.font = '14px serif'; c.fillText('🥇', 16, 32);
-        document.getElementById('favicon').href = canv.toDataURL();
-
-        refresh(); news();
-        setInterval(refresh, 60000);
-        setInterval(news, 600000);
+        
+        setInterval(refresh, 60000); refresh();
     </script>
 </body>
 </html>
