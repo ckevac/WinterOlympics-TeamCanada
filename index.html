@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Canada - Milano Cortina 2026</title>
-    <link id="favicon" rel="icon" type="image/png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇨🇦</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -12,12 +12,12 @@
             --canada-red: #FF0000;
             --canada-dark: #CC0000;
             --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
-            --card-bg: rgba(15, 15, 15, 0.95);
+            --card-bg: rgba(15, 15, 15, 0.92);
         }
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
                         url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000');
             background-size: cover; background-attachment: fixed;
             color: white; margin: 0; padding-bottom: 120px;
@@ -25,7 +25,7 @@
 
         .header {
             background: linear-gradient(90deg, var(--canada-red) 0%, var(--canada-dark) 50%, var(--canada-red) 100%);
-            padding: 25px 0; text-align: center; position: sticky; top: 0; z-index: 1000;
+            padding: 20px 0; text-align: center; position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
@@ -37,14 +37,20 @@
             50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
         }
 
-        .main-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .main-layout { max-width: 1200px; margin: 20px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
 
-        .card { background: var(--card-bg); border-radius: 12px; padding: 20px; border-top: 4px solid var(--canada-red); margin-bottom: 20px; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 20px; border-top: 4px solid var(--canada-red); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        /* Canada Specific Medal Bar */
+        .can-medal-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-top: 15px; }
+        .medal-box { padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); }
+        .medal-box span { display: block; font-size: 0.8em; color: #aaa; text-transform: uppercase; }
+        .medal-box strong { font-size: 2em; font-family: 'Courier New', monospace; }
 
         .medal-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .medal-table th { text-align: left; color: #888; font-size: 0.75em; padding-bottom: 10px; text-transform: uppercase; }
-        .medal-row { border-bottom: 1px solid #222; }
-        .is-canada { background: rgba(255, 0, 0, 0.2); border: 1px solid var(--canada-red); font-weight: bold; }
+        .medal-row { border-bottom: 1px solid #222; transition: 0.3s; }
+        .is-canada { background: rgba(255, 0, 0, 0.2); font-weight: bold; border: 1px solid var(--canada-red); }
         .m-val { width: 45px; text-align: center; font-weight: bold; font-family: monospace; font-size: 1.2em; }
 
         .news-item { background: rgba(255,255,255,0.05); border-left: 3px solid var(--canada-red); padding: 12px; border-radius: 4px; margin-bottom: 10px; font-size: 0.9em; }
@@ -78,13 +84,23 @@
     <div class="main-layout">
         <div class="content-left">
             <div class="card">
-                <h3 style="margin:0"><i class="fas fa-list-ol"></i> Live Medal Standings</h3>
+                <h3 style="margin:0; text-align: center;"><i class="fab fa-canadian-maple-leaf"></i> Canada Medal Count</h3>
+                <div class="can-medal-bar">
+                    <div class="medal-box"><span>Gold</span><strong id="can-g" style="color:var(--gold)">0</strong></div>
+                    <div class="medal-box"><span>Silver</span><strong id="can-s" style="color:var(--silver)">0</strong></div>
+                    <div class="medal-box"><span>Bronze</span><strong id="can-b" style="color:var(--bronze)">0</strong></div>
+                    <div class="medal-box" style="background: var(--canada-dark)"><span>Total</span><strong id="can-t">0</strong></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin:0"><i class="fas fa-list-ol"></i> International Standings</h3>
                 <table class="medal-table">
                     <thead>
                         <tr><th>Rank</th><th>Nation</th><th style="text-align:center">G</th><th style="text-align:center">S</th><th style="text-align:center">B</th></tr>
                     </thead>
                     <tbody id="medal-tbody">
-                        <tr><td colspan="5" align="center">Syncing Sheet...</td></tr>
+                        <tr><td colspan="5" align="center">Syncing results...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -109,21 +125,13 @@
         let lastCounts = { gold: 0, silver: 0, bronze: 0 };
         let firstLoad = true;
 
-        // Restore Favicon
-        const canvas = document.createElement('canvas');
-        canvas.width = 32; canvas.height = 32;
-        const ctx = canvas.getContext('2d');
-        ctx.font = '24px serif';
-        ctx.fillText('🇨🇦', 0, 26);
-        document.getElementById('favicon').href = canvas.toDataURL();
-
         async function updateSheetData() {
             try {
                 const res = await fetch(SHEET_URL);
                 const text = await res.text();
                 const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, "").trim()));
                 let countries = [];
-                let canada = null;
+                let canada = { g:0, s:0, b:0 };
 
                 rows.forEach((row, i) => {
                     if (i === 0 || !row[1] || row[1] === "Totals") return;
@@ -133,9 +141,16 @@
                     countries.push(entry);
                 });
 
+                // Update Canada-Only Chart
+                document.getElementById('can-g').innerText = canada.g;
+                document.getElementById('can-s').innerText = canada.s;
+                document.getElementById('can-b').innerText = canada.b;
+                document.getElementById('can-t').innerText = canada.g + canada.s + canada.b;
+
+                // Update Table
                 countries.sort((a,b) => (b.g-a.g) || (b.s-a.s));
                 const topList = countries.slice(0, 10);
-                if (canada && !topList.some(c => c.isCan)) topList.push(canada);
+                if (canada.name && !topList.some(c => c.isCan)) topList.push(canada);
 
                 document.getElementById('medal-tbody').innerHTML = topList.map((c, i) => `
                     <tr class="medal-row ${c.isCan ? 'is-canada' : ''}">
@@ -147,13 +162,14 @@
                     </tr>
                 `).join('');
 
-                if (canada && !firstLoad && (canada.g > lastCounts.gold || canada.s > lastCounts.silver || canada.b > lastCounts.bronze)) {
+                // Celebration logic
+                if (!firstLoad && (canada.g > lastCounts.gold || canada.s > lastCounts.silver || canada.b > lastCounts.bronze)) {
                     document.getElementById('goal-horn').play().catch(()=>{});
                     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 }
-                if(canada) lastCounts = { gold: canada.g, silver: canada.s, bronze: canada.b };
+                lastCounts = { gold: canada.g, silver: canada.s, bronze: canada.b };
                 firstLoad = false;
-            } catch (e) { console.error("Sheet Sync Error:", e); }
+            } catch (e) { console.error("Sheet Error", e); }
         }
 
         async function updateNews() {
@@ -163,10 +179,9 @@
                 document.getElementById('news-feed').innerHTML = data.items.slice(0, 3).map(item => `
                     <div class="news-item">
                         <strong>${item.title.split(' - ')[0]}</strong>
-                        <small>${new Date(item.pubDate).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} • NEWS</small>
+                        <small>${new Date(item.pubDate).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} • CBC NEWS</small>
                     </div>
                 `).join('');
-                
                 const tickerItems = data.items.slice(0, 8).map(item => `<span class="ticker-item">🍁 ${item.title.split(' - ')[0]}</span>`).join('');
                 document.getElementById('ticker-content').innerHTML = tickerItems + tickerItems;
             } catch (e) {}
