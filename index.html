@@ -14,7 +14,7 @@
             --silver: #C0C0C0;
             --bronze: #CD7F32;
             --bg-dark: #0a0e14;
-            --card-bg: rgba(30, 30, 30, 0.85);
+            --card-bg: rgba(30, 30, 30, 0.9);
             --ticker-bg: #050505;
         }
 
@@ -31,42 +31,41 @@
             padding-bottom: 70px;
         }
 
+        /* Status Bar */
+        .status-bar {
+            background: rgba(0,0,0,0.8);
+            text-align: center;
+            padding: 5px;
+            font-size: 0.8em;
+            color: #aaa;
+            border-bottom: 1px solid #333;
+        }
+
         .header {
             background: linear-gradient(90deg, var(--canada-red) 0%, var(--canada-dark) 50%, var(--canada-red) 100%);
-            padding: 15px 0;
+            padding: 20px 0;
             text-align: center;
             box-shadow: 0 4px 20px rgba(255, 0, 0, 0.4);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        #countdown-timer {
-            background: rgba(0,0,0,0.5);
-            display: inline-block;
-            padding: 4px 18px;
-            border-radius: 20px;
-            font-family: monospace;
-            font-weight: bold;
-            margin-top: 8px;
-            color: var(--gold);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-        }
+        .header h1 { letter-spacing: 2px; font-size: 2em; }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .full-width { grid-column: span 2; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .dashboard-grid { display: flex; flex-direction: column; gap: 20px; }
 
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-top: 3px solid var(--canada-red);
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            border-top: 4px solid var(--canada-red);
         }
 
-        .medal-count-display { display: flex; justify-content: space-around; gap: 15px; margin-top: 15px; }
-        .medal-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center; flex: 1; border: 1px solid rgba(255,255,255,0.1); }
-        .medal-num { font-size: 2.8em; font-weight: 800; display: block; }
+        .medal-count-display { display: flex; justify-content: space-around; gap: 15px; margin-top: 20px; }
+        .medal-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; text-align: center; flex: 1; border: 1px solid rgba(255,255,255,0.1); }
+        .medal-num { font-size: 3.5em; font-weight: 800; display: block; line-height: 1; margin-bottom: 5px; }
 
         .ticker-wrap {
             position: fixed; bottom: 0; width: 100%; overflow: hidden;
@@ -80,7 +79,7 @@
             animation: ticker-animation 180s linear infinite;
         }
 
-        .ticker-item { display: inline-block; padding: 0 100px; font-size: 1.1em; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .ticker-item { display: inline-block; padding: 0 100px; font-size: 1.1em; font-weight: 500; text-transform: uppercase; }
         .ticker-item i { color: var(--canada-red); margin-right: 12px; }
 
         @keyframes ticker-animation {
@@ -89,13 +88,13 @@
         }
 
         .leader-row {
-            display: grid; grid-template-columns: 45px 1fr 160px;
-            align-items: center; padding: 10px; margin: 5px 0;
-            background: rgba(255,255,255,0.05); border-radius: 8px;
+            display: grid; grid-template-columns: 50px 1fr 180px;
+            align-items: center; padding: 12px; margin: 8px 0;
+            background: rgba(255,255,255,0.03); border-radius: 8px;
         }
-        .is-canada { background: rgba(255, 0, 0, 0.2); border: 1.5px solid var(--canada-red); }
-        .medal-cols { display: flex; justify-content: space-between; font-weight: bold; }
-        .medal-cols span { width: 40px; text-align: center; }
+        .is-canada { background: rgba(255, 0, 0, 0.25); border: 1px solid var(--canada-red); font-weight: bold; }
+        .medal-cols { display: flex; justify-content: space-between; }
+        .medal-cols span { width: 45px; text-align: center; }
 
         .live-pulse {
             height: 10px; width: 10px; background-color: #00ff00;
@@ -103,32 +102,35 @@
             box-shadow: 0 0 10px #00ff00; animation: pulse 2s infinite;
         }
 
-        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
-        .flash-update { color: #00ff00 !important; transform: scale(1.1); text-shadow: 0 0 10px #00ff00; transition: 0.3s; }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        .flash-update { color: #00ff00 !important; transform: scale(1.15); transition: 0.3s; }
     </style>
 </head>
 <body>
 
+    <div class="status-bar">
+        <span class="live-pulse"></span> LIVE SYNC ACTIVE &nbsp; | &nbsp; LAST UPDATED: <span id="sync-time">---</span>
+    </div>
+
     <div class="header">
         <h1><i class="fas fa-leaf"></i> TEAM CANADA 2026</h1>
-        <div id="countdown-timer">SYNCING LIVE DATA...</div>
     </div>
 
     <div class="container">
         <div class="dashboard-grid">
             
-            <div class="card full-width">
-                <h3 align="center"><span class="live-pulse"></span> National Medal Count</h3>
+            <div class="card">
+                <h3 align="center">National Medal Count</h3>
                 <div class="medal-count-display">
-                    <div class="medal-box" style="border-bottom: 4px solid var(--gold)">
+                    <div class="medal-box" style="border-bottom: 5px solid var(--gold)">
                         <span class="medal-num" id="gold-count">0</span>
                         <small>GOLD</small>
                     </div>
-                    <div class="medal-box" style="border-bottom: 4px solid var(--silver)">
+                    <div class="medal-box" style="border-bottom: 5px solid var(--silver)">
                         <span class="medal-num" id="silver-count">0</span>
                         <small>SILVER</small>
                     </div>
-                    <div class="medal-box" style="border-bottom: 4px solid var(--bronze)">
+                    <div class="medal-box" style="border-bottom: 5px solid var(--bronze)">
                         <span class="medal-num" id="bronze-count">0</span>
                         <small>BRONZE</small>
                     </div>
@@ -136,47 +138,27 @@
             </div>
 
             <div class="card">
-                <h3><i class="far fa-star"></i> Team Highlights</h3>
-                <div id="highlights-list">
-                    <div style="padding:10px; border-left:4px solid var(--canada-red); margin-bottom:10px; background:rgba(255,255,255,0.03)">
-                        <strong>Flag Bearers</strong><br><small>Mikaël Kingsbury & Marielle Thompson</small>
-                    </div>
-                    <div style="padding:10px; border-left:4px solid var(--bronze); margin-bottom:10px; background:rgba(255,255,255,0.03)">
-                        <strong>First Medal!</strong><br><small>Valérie Maltais (3000m Speed Skating)</small>
-                    </div>
+                <h3><i class="fas fa-chart-line"></i> Global Standings</h3>
+                <div id="leaderboard-table" style="margin-top:15px;">
+                    <p style="text-align:center; opacity:0.5;">Connecting to medal feed...</p>
                 </div>
             </div>
 
-            <div class="card">
-                <h3><i class="fas fa-hockey-puck"></i> Key Matchup</h3>
-                <div style="padding:15px; text-align:center; background:rgba(0,0,0,0.2); border-radius:10px;">
-                    <h4 style="color:var(--gold)">Feb 11 - Men's Hockey</h4>
-                    <p>Canada vs Switzerland</p>
-                    <small>Group Stage Opener</small>
-                </div>
-            </div>
-
-            <div class="card full-width">
-                <h3><i class="fas fa-chart-line"></i> Global Rankings</h3>
-                <div id="leaderboard-table">Loading live rankings...</div>
-            </div>
         </div>
     </div>
 
     <div class="ticker-wrap">
         <div class="ticker" id="ticker-content">
-            <div class="ticker-item"><i class="fas fa-sync fa-spin"></i> Syncing Headlines...</div>
+            <div class="ticker-item"><i class="fas fa-sync fa-spin"></i> Loading News...</div>
         </div>
     </div>
 
     <script>
-        // PASTE YOUR PUBLISHED LINK HERE
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA35YvUF3vcnonTTI7Eh53EmiqWdrP_0Kcwwb0BRjmmLrzdsS7UHF8fGQtekliVVw1Z1SKj0P4eS2U/pub?gid=0&single=true&output=csv";
         const RSS_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent("https://news.google.com/rss/search?q=Team+Canada+Olympics+2026&hl=en-CA&gl=CA&ceid=CA:en")}`;
 
         let leaderboard = [];
 
-        // 1. Fetch Medals from your Google Sheet
         async function fetchLiveMedals() {
             try {
                 const response = await fetch(SHEET_CSV_URL);
@@ -188,7 +170,6 @@
 
                 rows.forEach((row, index) => {
                     if (index === 0 || row[1] === "Totals" || !row[1]) return;
-
                     let name = row[1].split('*')[0].trim();
                     let entry = {
                         name: name,
@@ -198,39 +179,33 @@
                         bronze: parseInt(row[4]) || 0,
                         isCanada: name.toLowerCase().includes("canada")
                     };
-
                     if (entry.isCanada) canadaData = entry;
                     allCountries.push(entry);
                 });
 
-                // Sort by Gold > Silver > Bronze
                 allCountries.sort((a, b) => (b.gold - a.gold) || (b.silver - a.silver) || (b.bronze - a.bronze));
-                
-                // Show Top 5 + Canada (if not in top 5)
                 leaderboard = allCountries.slice(0, 5);
-                if (canadaData && !leaderboard.some(c => c.isCanada)) {
-                    leaderboard.push(canadaData);
-                }
+                if (canadaData && !leaderboard.some(c => c.isCanada)) leaderboard.push(canadaData);
 
                 renderLeaderboard();
                 if (canadaData) updateCanadaCounters(canadaData);
+                
+                // Update "Last Updated" Clock
+                document.getElementById('sync-time').innerText = new Date().toLocaleTimeString();
 
-            } catch (err) { console.error("Medal Sync Error:", err); }
+            } catch (err) { console.error("Sync Error:", err); }
         }
 
         function updateCanadaCounters(data) {
-            const g = document.getElementById('gold-count');
-            const s = document.getElementById('silver-count');
-            const b = document.getElementById('bronze-count');
-
-            if (g.innerText != data.gold) { g.innerText = data.gold; triggerFlash(g); }
-            if (s.innerText != data.silver) { s.innerText = data.silver; triggerFlash(s); }
-            if (b.innerText != data.bronze) { b.innerText = data.bronze; triggerFlash(b); }
-        }
-
-        function triggerFlash(el) {
-            el.classList.add('flash-update');
-            setTimeout(() => el.classList.remove('flash-update'), 2000);
+            const counters = { 'gold-count': data.gold, 'silver-count': data.silver, 'bronze-count': data.bronze };
+            for (let id in counters) {
+                const el = document.getElementById(id);
+                if (el.innerText != counters[id]) {
+                    el.innerText = counters[id];
+                    el.classList.add('flash-update');
+                    setTimeout(() => el.classList.remove('flash-update'), 2000);
+                }
+            }
         }
 
         function renderLeaderboard() {
@@ -243,24 +218,15 @@
                         <span style="color:var(--gold)">${country.gold}</span>
                         <span style="color:var(--silver)">${country.silver}</span>
                         <span style="color:var(--bronze)">${country.bronze}</span>
-                        <span style="opacity:0.5">${country.gold + country.silver + country.bronze}</span>
+                        <span style="opacity:0.5; width:30px;">${country.gold + country.silver + country.bronze}</span>
                     </div>
                 </div>
             `).join('');
         }
 
         function getFlag(name) {
-            const f = {"Canada":"🇨🇦","Italy":"🇮🇹","Norway":"🇳🇴","Japan":"🇯🇵","Sweden":"🇸🇪","USA":"🇺🇸","Germany":"🇩🇪","Switzerland":"🇨🇭","Slovenia":"🇸🇮"};
-            return f[Object.keys(f).find(k => name.includes(k))] || "🏳️";
-        }
-
-        // 2. Original Countdown & News Logic
-        function updateCountdown() {
-            const ceremonyDate = new Date("February 6, 2026 14:00:00 EST").getTime();
-            const now = new Date().getTime();
-            if (ceremonyDate - now <= 0) {
-                document.getElementById("countdown-timer").innerText = "THE GAMES ARE LIVE!";
-            }
+            const flags = {"Canada":"🇨🇦","Italy":"🇮🇹","Norway":"🇳🇴","Japan":"🇯🇵","Sweden":"🇸🇪","USA":"🇺🇸","Germany":"🇩🇪","Switzerland":"🇨🇭","China":"🇨🇳","France":"🇫🇷","Austria":"🇦🇹"};
+            return flags[Object.keys(flags).find(k => name.includes(k))] || "🏳️";
         }
 
         async function updateNewsTicker() {
@@ -275,11 +241,10 @@
             } catch (e) { ticker.innerHTML = `<div class="ticker-item">Awaiting Live Feed...</div>`; }
         }
 
-        // Initialize
+        // Run
         fetchLiveMedals();
         updateNewsTicker();
-        setInterval(fetchLiveMedals, 300000); // Sync medals every 5 mins
-        setInterval(updateCountdown, 1000);
+        setInterval(fetchLiveMedals, 300000); // Check sheet every 5 mins
         setInterval(updateNewsTicker, 600000);
     </script>
 </body>
