@@ -96,7 +96,7 @@
     </div>
 
     <div class="podium-roll" id="recent-achiever">
-        <i class="fas fa-star"></i> STANDBY: WAITING FOR LIVE UPDATES...
+        <i class="fas fa-star"></i> RECENT: Megan Oldham (Freeski Slopestyle) - BRONZE 🥉
     </div>
 
     <script>
@@ -125,21 +125,18 @@
                 document.getElementById('can-b').innerText = canada.b;
                 document.getElementById('can-t').innerText = canada.g + canada.s + canada.b;
 
-                // AUTOMATIC RECENT UPDATE LOGIC
+                // DETECT NEW MEDAL UPDATES
                 if (!firstLoad) {
-                    let recentText = "";
-                    if (canada.g > lastCounts.gold) recentText = "NEW MEDAL: TEAM CANADA GOLD! 🥇";
-                    else if (canada.s > lastCounts.silver) recentText = "NEW MEDAL: TEAM CANADA SILVER! 🥈";
-                    else if (canada.b > lastCounts.bronze) recentText = "NEW MEDAL: TEAM CANADA BRONZE! 🥉";
+                    let alertMsg = "";
+                    if (canada.g > lastCounts.gold) alertMsg = "NEW MEDAL: TEAM CANADA GOLD! 🥇";
+                    else if (canada.s > lastCounts.silver) alertMsg = "NEW MEDAL: TEAM CANADA SILVER! 🥈";
+                    else if (canada.b > lastCounts.bronze) alertMsg = "NEW MEDAL: TEAM CANADA BRONZE! 🥉";
 
-                    if (recentText !== "") {
-                        document.getElementById('recent-achiever').innerHTML = `<i class="fas fa-fire"></i> ${recentText}`;
+                    if (alertMsg !== "") {
+                        document.getElementById('recent-achiever').innerHTML = `<i class="fas fa-fire"></i> ${alertMsg}`;
                         document.getElementById('goal-horn').play().catch(()=>{});
                         confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                     }
-                } else {
-                    // Initial state on page load
-                    document.getElementById('recent-achiever').innerHTML = `<i class="fas fa-star"></i> RECENT: Valérie Maltais (Speed Skating) - BRONZE 🥉`;
                 }
 
                 countries.sort((a,b) => (b.g-a.g) || (b.s-a.s));
