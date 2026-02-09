@@ -73,7 +73,11 @@
 
     <div class="main-layout">
         <div class="card">
-            <h2 style="margin:0; text-align: center;"><i class="fab fa-canadian-maple-leaf"></i> Canada Medal Count</h2>
+            <h2 style="margin:0; text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <i class="fab fa-canadian-maple-leaf" style="font-size: 0.8em;"></i> 
+                Canada Medal Count
+                <i class="fab fa-canadian-maple-leaf" style="font-size: 0.8em;"></i>
+            </h2>
             <div class="can-medal-bar">
                 <div class="medal-box"><span>Gold</span><strong id="can-g" style="color:var(--gold)">0</strong></div>
                 <div class="medal-box"><span>Silver</span><strong id="can-s" style="color:var(--silver)">0</strong></div>
@@ -125,7 +129,6 @@
                 document.getElementById('can-b').innerText = canada.b;
                 document.getElementById('can-t').innerText = canada.g + canada.s + canada.b;
 
-                // DETECT NEW MEDAL UPDATES
                 if (!firstLoad) {
                     let alertMsg = "";
                     if (canada.g > lastCounts.gold) alertMsg = "NEW MEDAL: TEAM CANADA GOLD! 🥇";
