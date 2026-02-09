@@ -38,10 +38,8 @@
         }
 
         .main-layout { max-width: 900px; margin: 20px auto; padding: 0 20px; }
-
         .card { background: var(--card-bg); border-radius: 12px; padding: 25px; border-top: 4px solid var(--canada-red); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* Canada Specific Medal Bar */
         .can-medal-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; margin-top: 15px; }
         .medal-box { padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.05); }
         .medal-box span { display: block; font-size: 0.85em; color: #aaa; text-transform: uppercase; margin-bottom: 5px; }
@@ -57,6 +55,7 @@
             position: fixed; bottom: 0; width: 100%; background: var(--canada-dark);
             color: white; padding: 15px 0; text-align: center; font-weight: bold; z-index: 999;
             box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
+            text-transform: uppercase; letter-spacing: 1px;
         }
     </style>
 </head>
@@ -96,19 +95,17 @@
         </div>
     </div>
 
-    <div class="podium-roll">
-        <i class="fas fa-star"></i> RECENT: Valérie Maltais (Speed Skating) - BRONZE 🥉
+    <div class="podium-roll" id="recent-achiever">
+        <i class="fas fa-star"></i> STANDBY: WAITING FOR LIVE UPDATES...
     </div>
 
     <script>
-        // SHEET_URL with cache buster logic
         const BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA35YvUF3vcnonTTI7Eh53EmiqWdrP_0Kcwwb0BRjmmLrzdsS7UHF8fGQtekliVVw1Z1SKj0P4eS2U/pub?gid=0&single=true&output=csv";
         let lastCounts = { gold: 0, silver: 0, bronze: 0 };
         let firstLoad = true;
 
         async function updateSheetData() {
             try {
-                // Force fresh data by appending a timestamp
                 const res = await fetch(`${BASE_URL}&t=${new Date().getTime()}`);
                 const text = await res.text();
                 const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, "").trim()));
@@ -123,11 +120,27 @@
                     countries.push(entry);
                 });
 
-                // Update UI
                 document.getElementById('can-g').innerText = canada.g;
                 document.getElementById('can-s').innerText = canada.s;
                 document.getElementById('can-b').innerText = canada.b;
                 document.getElementById('can-t').innerText = canada.g + canada.s + canada.b;
+
+                // AUTOMATIC RECENT UPDATE LOGIC
+                if (!firstLoad) {
+                    let recentText = "";
+                    if (canada.g > lastCounts.gold) recentText = "NEW MEDAL: TEAM CANADA GOLD! 🥇";
+                    else if (canada.s > lastCounts.silver) recentText = "NEW MEDAL: TEAM CANADA SILVER! 🥈";
+                    else if (canada.b > lastCounts.bronze) recentText = "NEW MEDAL: TEAM CANADA BRONZE! 🥉";
+
+                    if (recentText !== "") {
+                        document.getElementById('recent-achiever').innerHTML = `<i class="fas fa-fire"></i> ${recentText}`;
+                        document.getElementById('goal-horn').play().catch(()=>{});
+                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    }
+                } else {
+                    // Initial state on page load
+                    document.getElementById('recent-achiever').innerHTML = `<i class="fas fa-star"></i> RECENT: Valérie Maltais (Speed Skating) - BRONZE 🥉`;
+                }
 
                 countries.sort((a,b) => (b.g-a.g) || (b.s-a.s));
                 const topList = countries.slice(0, 10);
@@ -143,18 +156,13 @@
                     </tr>
                 `).join('');
 
-                // Celebrate new medals
-                if (!firstLoad && (canada.g > lastCounts.gold || canada.s > lastCounts.silver || canada.b > lastCounts.bronze)) {
-                    document.getElementById('goal-horn').play().catch(()=>{});
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                }
                 lastCounts = { gold: canada.g, silver: canada.s, bronze: canada.b };
                 firstLoad = false;
             } catch (e) { console.error("Sheet Error", e); }
         }
 
         updateSheetData();
-        setInterval(updateSheetData, 60000); // Auto-refresh every 60 seconds
+        setInterval(updateSheetData, 60000);
     </script>
 </body>
 </html>
