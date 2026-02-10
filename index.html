@@ -30,11 +30,11 @@
         }
 
         .header h1 { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 0; font-size: 1.8em; }
-        .fa-canadian-maple-leaf { animation: leaf-glow 3s infinite ease-in-out; color: #fff; }
-
-        @keyframes leaf-glow {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px white); }
-            50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
+        
+        .test-btn {
+            position: absolute; right: 20px; top: 25px;
+            background: rgba(255,255,255,0.2); border: 1px solid white;
+            color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.7em;
         }
 
         .main-layout { max-width: 900px; margin: 20px auto; padding: 0 20px; }
@@ -64,6 +64,7 @@
     <audio id="goal-horn" src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptoken=645b0800-474c-4a37-8321-4a572626e36d" preload="auto"></audio>
 
     <div class="header">
+        <button class="test-btn" onclick="triggerCelebration()"><i class="fas fa-bullhorn"></i> TEST CELEBRATION</button>
         <h1>
             <i class="fab fa-canadian-maple-leaf"></i>
             TEAM CANADA LIVE
@@ -110,11 +111,32 @@
         let lastCounts = { gold: 0, silver: 0, bronze: 0 };
         let firstLoad = true;
 
+        // 1. AUDIO UNLOCKER
+        document.body.addEventListener('click', () => {
+            const horn = document.getElementById('goal-horn');
+            horn.load(); // Prime the audio
+            console.log("Audio permission granted.");
+        }, { once: true });
+
+        // 2. CELEBRATION FUNCTION
+        function triggerCelebration() {
+            const horn = document.getElementById('goal-horn');
+            horn.currentTime = 0;
+            horn.play().catch(e => console.log("Click the page first to enable sound!"));
+            
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FF0000', '#FFFFFF', '#FFD700']
+            });
+        }
+
         async function updateSheetData() {
             try {
                 const timestamp = new Date().getTime();
                 
-                // 1. FETCH OVERALL COUNTS & STANDINGS
+                // Fetch Overall Counts
                 const res = await fetch(`${COUNTS_URL}&t=${timestamp}`);
                 const text = await res.text();
                 const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, "").trim()));
@@ -135,10 +157,9 @@
                 document.getElementById('can-b').innerText = canada.b;
                 document.getElementById('can-t').innerText = canada.g + canada.s + canada.b;
 
-                // 2. FETCH LATEST MEDALIST FROM SECOND TAB
+                // Fetch Latest Medalist
                 const mRes = await fetch(`${MEDALISTS_URL}&t=${timestamp}`);
                 const mText = await mRes.text();
-                // Assumes Apps Script wrote: Name, Sport, MedalType in first row
                 const mData = mText.split(',');
 
                 if (mData.length >= 3) {
@@ -151,7 +172,7 @@
                         `<i class="fas fa-star"></i> RECENT: ${name} (${sport}) - ${medal.toUpperCase()} ${emoji}`;
                 }
 
-                // 3. UPDATE TABLE
+                // Update International Table
                 countries.sort((a,b) => (b.g-a.g) || (b.s-a.s));
                 const topList = countries.slice(0, 10);
                 if (canada.name && !topList.some(c => c.isCan)) topList.push(canada);
@@ -166,21 +187,20 @@
                     </tr>
                 `).join('');
 
-                // 4. CELEBRATION TRIGGER
+                // Celebration Trigger (Only if count increases)
                 if (!firstLoad) {
                     if (canada.g > lastCounts.gold || canada.s > lastCounts.silver || canada.b > lastCounts.bronze) {
-                        document.getElementById('goal-horn').play().catch(()=>{});
-                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                        triggerCelebration();
                     }
                 }
 
                 lastCounts = { gold: canada.g, silver: canada.s, bronze: canada.b };
                 firstLoad = false;
-            } catch (e) { console.error("Sheet Error", e); }
+            } catch (e) { console.error("Sheet Sync Error", e); }
         }
 
         updateSheetData();
-        setInterval(updateSheetData, 60000); // Check for updates every minute
+        setInterval(updateSheetData, 60000);
     </script>
 </body>
 </html>
