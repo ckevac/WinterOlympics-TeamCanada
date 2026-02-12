@@ -41,7 +41,8 @@
         .card { background: var(--card-bg); border-radius: 12px; padding: 25px; border-top: 4px solid var(--canada-red); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
         .can-medal-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; margin-top: 15px; }
-        .medal-box { padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.05); }
+        .medal-box { padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.05); transition: transform 0.2s; }
+        .medal-box:hover { transform: translateY(-3px); }
         .medal-box span { display: block; font-size: 0.85em; color: #aaa; text-transform: uppercase; margin-bottom: 5px; }
         .medal-box strong { font-size: 2.5em; font-family: 'Courier New', monospace; }
 
@@ -75,9 +76,9 @@
                 Medal Count
             </h2>
             <div class="can-medal-bar">
-                <div class="medal-box"><span>Gold</span><strong id="can-g" style="color:var(--gold)">0</strong></div>
-                <div class="medal-box"><span>Silver</span><strong id="can-s" style="color:var(--silver)">0</strong></div>
-                <div class="medal-box"><span>Bronze</span><strong id="can-b" style="color:var(--bronze)">0</strong></div>
+                <div class="medal-box" id="box-gold" style="cursor:help"><span>Gold</span><strong id="can-g" style="color:var(--gold)">0</strong></div>
+                <div class="medal-box" id="box-silver" style="cursor:help"><span>Silver</span><strong id="can-s" style="color:var(--silver)">0</strong></div>
+                <div class="medal-box" id="box-bronze" style="cursor:help"><span>Bronze</span><strong id="can-b" style="color:var(--bronze)">0</strong></div>
                 <div class="medal-box" style="background: var(--canada-dark)"><span>Total</span><strong id="can-t">0</strong></div>
             </div>
         </div>
@@ -115,14 +116,13 @@
             try {
                 const timestamp = new Date().getTime();
                 
-                // 1. Update National Standings
+                // 1. Standings
                 const res = await fetch(`${COUNTS_URL}&t=${timestamp}`);
                 const text = await res.text();
                 const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, "").trim()));
                 
                 let countries = [];
                 let canada = { g:0, s:0, b:0 };
-
                 rows.forEach((row, i) => {
                     if (i === 0 || !row[1] || row[1] === "Totals") return;
                     let entry = { name: row[1].split('*')[0], g: parseInt(row[2])||0, s: parseInt(row[3])||0, b: parseInt(row[4])||0 };
@@ -131,29 +131,45 @@
                     countries.push(entry);
                 });
 
+                // 2. Detailed Medalists for Hover
+                const mRes = await fetch(`${MEDALISTS_URL}&t=${timestamp}`);
+                const mText = await mRes.text();
+                const mRows = mText.split('\n');
+
+                let listG = [], listS = [], listB = [];
+                // Skip row 0 (headers), process every data row
+                for (let i = 1; i < mRows.length; i++) {
+                    const cols = mRows[i].split(',').map(c => c.replace(/"/g, "").trim());
+                    if (cols.length >= 3 && cols[0] !== "") {
+                        const entry = `${cols[0]} - ${cols[1]}`;
+                        const type = cols[2].toLowerCase();
+                        if (type.includes("gold")) listG.push(entry);
+                        else if (type.includes("silver")) listS.push(entry);
+                        else if (type.includes("bronze")) listB.push(entry);
+                    }
+                }
+
+                // Update tooltips (\n creates new line in native title attribute)
+                document.getElementById('box-gold').title = listG.length ? listG.join('\n') : "No gold medals yet";
+                document.getElementById('box-silver').title = listS.length ? listS.join('\n') : "No silver medals yet";
+                document.getElementById('box-bronze').title = listB.length ? listB.join('\n') : "No bronze medals yet";
+
+                // 3. Update Visuals
                 document.getElementById('can-g').innerText = canada.g;
                 document.getElementById('can-s').innerText = canada.s;
                 document.getElementById('can-b').innerText = canada.b;
                 document.getElementById('can-t').innerText = canada.g + canada.s + canada.b;
 
-                // 2. Update Recent Medalist (Look at Row 2, index [1])
-                const mRes = await fetch(`${MEDALISTS_URL}&t=${timestamp}`);
-                const mText = await mRes.text();
-                const mRows = mText.split('\n');
-                
                 if (mRows.length > 1) {
-                    const mData = mRows[1].split(','); // This is Row 2 in your Google Sheet
-                    if (mData.length >= 3) {
-                        const name = mData[0].replace(/"/g, "").trim();
-                        const sport = mData[1].replace(/"/g, "").trim();
-                        const medal = mData[2].replace(/"/g, "").trim().toLowerCase();
+                    const latest = mRows[1].split(',').map(c => c.replace(/"/g, "").trim());
+                    if (latest[0] !== "") {
+                        const medal = latest[2].toLowerCase();
                         const emoji = medal.includes("gold") ? "🥇" : medal.includes("silver") ? "🥈" : "🥉";
                         document.getElementById('recent-achiever').innerHTML = 
-                            `<i class="fas fa-star"></i> RECENT: ${name} (${sport}) - ${medal.toUpperCase()} ${emoji}`;
+                            `<i class="fas fa-star"></i> RECENT: ${latest[0]} (${latest[1]}) - ${medal.toUpperCase()} ${emoji}`;
                     }
                 }
 
-                // 3. Render Standings Table
                 countries.sort((a,b) => (b.g-a.g) || (b.s-a.s));
                 const topList = countries.slice(0, 10);
                 if (canada.name && !topList.some(c => c.isCan)) topList.push(canada);
