@@ -4,17 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Canada - Milano Cortina 2026</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇨🇦</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --can-red: #FF0000; --can-dark: #CC0000; --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32; }
-        body { font-family: 'Segoe UI', sans-serif; background: #111; color: white; margin: 0; padding-bottom: 80px; }
-        .header { background: var(--can-red); padding: 20px; text-align: center; position: sticky; top: 0; z-index: 1000; }
-        .card { background: rgba(255,255,255,0.05); margin: 20px; padding: 20px; border-radius: 10px; border-top: 4px solid var(--can-red); }
-        .medal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; }
-        .m-box strong { font-size: 2em; display: block; }
-        .podium-roll { position: fixed; bottom: 0; width: 100%; background: var(--can-dark); padding: 15px 0; text-align: center; font-weight: bold; }
-        .test-btn { position: absolute; right: 10px; top: 10px; background: none; border: 1px solid white; color: white; cursor: pointer; }
+        :root {
+            --canada-red: #FF0000;
+            --canada-dark: #CC0000;
+            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
+            --card-bg: rgba(15, 15, 15, 0.92);
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
+                        url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover; background-attachment: fixed;
+            color: white; margin: 0; padding-bottom: 80px;
+        }
+
+        .header {
+            background: linear-gradient(90deg, var(--canada-red) 0%, var(--canada-dark) 50%, var(--canada-red) 100%);
+            padding: 20px 0; text-align: center; position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .header h1 { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 0; font-size: 1.8em; }
+        
+        .test-btn {
+            position: absolute; right: 20px; top: 25px;
+            background: rgba(255,255,255,0.2); border: 1px solid white;
+            color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.7em;
+        }
+
+        .main-layout { max-width: 900px; margin: 20px auto; padding: 0 20px; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 25px; border-top: 4px solid var(--canada-red); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .can-medal-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; margin-top: 15px; }
+        .medal-box { padding: 15px; border-radius: 8px; background: rgba(255,255,255,0.05); }
+        .medal-box span { display: block; font-size: 0.85em; color: #aaa; text-transform: uppercase; margin-bottom: 5px; }
+        .medal-box strong { font-size: 2.5em; font-family: 'Courier New', monospace; }
+
+        .medal-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 1.1em; }
+        .medal-table th { text-align: left; color: #888; font-size: 0.75em; padding-bottom: 10px; text-transform: uppercase; }
+        .medal-row { border-bottom: 1px solid #222; transition: 0.3s; }
+        .is-canada { background: rgba(255, 0, 0, 0.2); font-weight: bold; border: 1px solid var(--canada-red); }
+        .m-val { width: 60px; text-align: center; font-weight: bold; font-family: monospace; font-size: 1.3em; }
+
+        .podium-roll {
+            position: fixed; bottom: 0; width: 100%; background: var(--canada-dark);
+            color: white; padding: 15px 0; text-align: center; font-weight: bold; z-index: 999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
@@ -22,16 +64,34 @@
     <audio id="goal-horn" src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptoken=645b0800-474c-4a37-8321-4a572626e36d" preload="auto"></audio>
 
     <div class="header">
-        <button class="test-btn" onclick="triggerParty()">TEST</button>
-        <h1>🇨🇦 TEAM CANADA LIVE</h1>
+        <button class="test-btn" onclick="triggerCelebration()"><i class="fas fa-bullhorn"></i> TEST</button>
+        <h1><i class="fab fa-canadian-maple-leaf"></i> TEAM CANADA LIVE <i class="fab fa-canadian-maple-leaf"></i></h1>
     </div>
 
-    <div class="card">
-        <div class="medal-grid">
-            <div class="m-box"><span style="color:var(--gold)">GOLD</span><strong id="can-g">0</strong></div>
-            <div class="m-box"><span style="color:var(--silver)">SILVER</span><strong id="can-s">0</strong></div>
-            <div class="m-box"><span style="color:var(--bronze)">BRONZE</span><strong id="can-b">0</strong></div>
-            <div class="m-box"><span>TOTAL</span><strong id="can-t">0</strong></div>
+    <div class="main-layout">
+        <div class="card">
+            <h2 style="margin:0; text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <i class="fab fa-canadian-maple-leaf" style="font-size: 0.8em;"></i> 
+                Medal Count
+            </h2>
+            <div class="can-medal-bar">
+                <div class="medal-box"><span>Gold</span><strong id="can-g" style="color:var(--gold)">0</strong></div>
+                <div class="medal-box"><span>Silver</span><strong id="can-s" style="color:var(--silver)">0</strong></div>
+                <div class="medal-box"><span>Bronze</span><strong id="can-b" style="color:var(--bronze)">0</strong></div>
+                <div class="medal-box" style="background: var(--canada-dark)"><span>Total</span><strong id="can-t">0</strong></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin:0"><i class="fas fa-list-ol"></i> International Standings</h3>
+            <table class="medal-table">
+                <thead>
+                    <tr><th>Rank</th><th>Nation</th><th style="text-align:center">G</th><th style="text-align:center">S</th><th style="text-align:center">B</th></tr>
+                </thead>
+                <tbody id="medal-tbody">
+                    <tr><td colspan="5" align="center">Syncing results...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -41,42 +101,82 @@
         const COUNTS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA35YvUF3vcnonTTI7Eh53EmiqWdrP_0Kcwwb0BRjmmLrzdsS7UHF8fGQtekliVVw1Z1SKj0P4eS2U/pub?gid=0&single=true&output=csv";
         const MEDALISTS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA35YvUF3vcnonTTI7Eh53EmiqWdrP_0Kcwwb0BRjmmLrzdsS7UHF8fGQtekliVVw1Z1SKj0P4eS2U/pub?gid=1276195899&single=true&output=csv";
 
-        function triggerParty() {
-            document.getElementById('goal-horn').play().catch(()=>{});
+        let lastCounts = { gold: 0, silver: 0, bronze: 0 };
+        let firstLoad = true;
+
+        function triggerCelebration() {
+            const horn = document.getElementById('goal-horn');
+            horn.currentTime = 0;
+            horn.play().catch(e => console.log("Click the page first!"));
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#FF0000', '#FFFFFF', '#FFD700'] });
         }
 
-        async function updateDashboard() {
-            const t = new Date().getTime();
-            
-            // 1. Update Counts
-            const resC = await fetch(`${COUNTS_URL}&t=${t}`);
-            const textC = await resC.text();
-            const rowsC = textC.split('\n').map(r => r.split(','));
-            const canada = rowsC.find(r => r[1] && r[1].includes("Canada"));
-            if(canada) {
-                document.getElementById('can-g').innerText = canada[2];
-                document.getElementById('can-s').innerText = canada[3];
-                document.getElementById('can-b').innerText = canada[4];
-                document.getElementById('can-t').innerText = parseInt(canada[2])+parseInt(canada[3])+parseInt(canada[4]);
-            }
+        async function updateSheetData() {
+            try {
+                const timestamp = new Date().getTime();
+                
+                // 1. Update National Standings
+                const res = await fetch(`${COUNTS_URL}&t=${timestamp}`);
+                const text = await res.text();
+                const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, "").trim()));
+                
+                let countries = [];
+                let canada = { g:0, s:0, b:0 };
 
-            // 2. Update Banner (Skip header, take Row 2)
-            const resM = await fetch(`${MEDALISTS_URL}&t=${t}`);
-            const textM = await resM.text();
-            const rowsM = textM.split('\n');
-            if(rowsM.length > 1) {
-                const latest = rowsM[1].split(',');
-                const medal = latest[2].replace(/"/g, "").toLowerCase();
-                const emoji = medal.includes("gold") ? "🥇" : medal.includes("silver") ? "🥈" : "🥉";
-                document.getElementById('recent-achiever').innerHTML = 
-                    `RECENT: ${latest[0].replace(/"/g, "")} (${latest[1].replace(/"/g, "")}) - ${medal.toUpperCase()} ${emoji}`;
-            }
+                rows.forEach((row, i) => {
+                    if (i === 0 || !row[1] || row[1] === "Totals") return;
+                    let entry = { name: row[1].split('*')[0], g: parseInt(row[2])||0, s: parseInt(row[3])||0, b: parseInt(row[4])||0 };
+                    entry.isCan = entry.name.toLowerCase().includes("canada");
+                    if (entry.isCan) canada = entry;
+                    countries.push(entry);
+                });
+
+                document.getElementById('can-g').innerText = canada.g;
+                document.getElementById('can-s').innerText = canada.s;
+                document.getElementById('can-b').innerText = canada.b;
+                document.getElementById('can-t').innerText = canada.g + canada.s + canada.b;
+
+                // 2. Update Recent Medalist (Look at Row 2, index [1])
+                const mRes = await fetch(`${MEDALISTS_URL}&t=${timestamp}`);
+                const mText = await mRes.text();
+                const mRows = mText.split('\n');
+                
+                if (mRows.length > 1) {
+                    const mData = mRows[1].split(','); // This is Row 2 in your Google Sheet
+                    if (mData.length >= 3) {
+                        const name = mData[0].replace(/"/g, "").trim();
+                        const sport = mData[1].replace(/"/g, "").trim();
+                        const medal = mData[2].replace(/"/g, "").trim().toLowerCase();
+                        const emoji = medal.includes("gold") ? "🥇" : medal.includes("silver") ? "🥈" : "🥉";
+                        document.getElementById('recent-achiever').innerHTML = 
+                            `<i class="fas fa-star"></i> RECENT: ${name} (${sport}) - ${medal.toUpperCase()} ${emoji}`;
+                    }
+                }
+
+                // 3. Render Standings Table
+                countries.sort((a,b) => (b.g-a.g) || (b.s-a.s));
+                const topList = countries.slice(0, 10);
+                if (canada.name && !topList.some(c => c.isCan)) topList.push(canada);
+                document.getElementById('medal-tbody').innerHTML = topList.map((c, i) => `
+                    <tr class="medal-row ${c.isCan ? 'is-canada' : ''}">
+                        <td style="padding:15px">${c.isCan ? '🇨🇦' : i+1}</td>
+                        <td>${c.name}</td>
+                        <td class="m-val" style="color:var(--gold)">${c.g}</td>
+                        <td class="m-val" style="color:var(--silver)">${c.s}</td>
+                        <td class="m-val" style="color:var(--bronze)">${c.b}</td>
+                    </tr>`).join('');
+
+                if (!firstLoad && (canada.g > lastCounts.gold || canada.s > lastCounts.silver || canada.b > lastCounts.bronze)) {
+                    triggerCelebration();
+                }
+                lastCounts = { gold: canada.g, silver: canada.s, bronze: canada.b };
+                firstLoad = false;
+            } catch (e) { console.error("Sync Error", e); }
         }
 
-        document.addEventListener('click', () => { document.getElementById('goal-horn').load(); }, {once:true});
-        updateDashboard();
-        setInterval(updateDashboard, 60000);
+        document.body.addEventListener('click', () => { document.getElementById('goal-horn').load(); }, { once: true });
+        updateSheetData();
+        setInterval(updateSheetData, 60000);
     </script>
 </body>
 </html>
