@@ -1,44 +1,82 @@
-function updateMedalistHistory() {
-  const url = "https://olympic.ca/team-canada-medallists-at-milano-cortina-2026/?t=" + new Date().getTime();
-  
-  try {
-    const response = UrlFetchApp.fetch(url, { "muteHttpExceptions": true });
-    const html = response.getContentText();
-    
-    // Scrape the latest medalist
-    const nameMatch = html.match(/<h3[^>]*class="medallist-name"[^>]*>(.*?)<\/h3>/);
-    const sportMatch = html.match(/<span[^>]*class="sport"[^>]*>(.*?)<\/span>/);
-    const medalMatch = html.match(/<span[^>]*class="medal (.*?)"/);
-    
-    if (nameMatch && sportMatch && medalMatch) {
-      const name = nameMatch[1].replace(/&nbsp;/g, ' ').trim();
-      const sport = sportMatch[1].trim();
-      const medal = medalMatch[1].trim();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Canada - Milano Cortina 2026</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --can-red: #FF0000; --can-dark: #CC0000; --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32; }
+        body { font-family: 'Segoe UI', sans-serif; background: #111; color: white; margin: 0; padding-bottom: 80px; }
+        .header { background: var(--can-red); padding: 20px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        .card { background: rgba(255,255,255,0.05); margin: 20px; padding: 20px; border-radius: 10px; border-top: 4px solid var(--can-red); }
+        .medal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; }
+        .m-box strong { font-size: 2em; display: block; }
+        .podium-roll { position: fixed; bottom: 0; width: 100%; background: var(--can-dark); padding: 15px 0; text-align: center; font-weight: bold; }
+        .test-btn { position: absolute; right: 10px; top: 10px; background: none; border: 1px solid white; color: white; cursor: pointer; }
+    </style>
+</head>
+<body>
 
-      const ss = SpreadsheetApp.getActiveSpreadsheet();
-      let sheet = ss.getSheetByName("Medalists");
-      if (!sheet) { 
-        sheet = ss.insertSheet("Medalists");
-        // Create headers if it's a brand new sheet
-        sheet.getRange("A1:D1").setValues([["Athlete", "Sport", "Medal", "Date Recorded"]]);
-        sheet.getRange("A1:D1").setFontWeight("bold").setBackground("#eeeeee");
-      }
+    <audio id="goal-horn" src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptoken=645b0800-474c-4a37-8321-4a572626e36d" preload="auto"></audio>
 
-      // CHECK ROW 2: This is where our most recent data lives (just below header)
-      const latestInSheet = sheet.getRange("A2").getValue();
+    <div class="header">
+        <button class="test-btn" onclick="triggerParty()">TEST</button>
+        <h1>🇨🇦 TEAM CANADA LIVE</h1>
+    </div>
 
-      if (name !== latestInSheet) {
-        // Insert a new blank row AT Row 2 (preserving Row 1 as Header)
-        sheet.insertRowAfter(1); 
-        
-        // Write the new data to the newly created Row 2
-        sheet.getRange("A2:D2").setValues([[name, sport, medal, new Date().toLocaleDateString()]]);
-        console.log("New Medal Added below header: " + name);
-      } else {
-        console.log("No new medal found. Current latest is still: " + name);
-      }
-    }
-  } catch (e) {
-    console.log("Sync Error: " + e.toString());
-  }
-}
+    <div class="card">
+        <div class="medal-grid">
+            <div class="m-box"><span style="color:var(--gold)">GOLD</span><strong id="can-g">0</strong></div>
+            <div class="m-box"><span style="color:var(--silver)">SILVER</span><strong id="can-s">0</strong></div>
+            <div class="m-box"><span style="color:var(--bronze)">BRONZE</span><strong id="can-b">0</strong></div>
+            <div class="m-box"><span>TOTAL</span><strong id="can-t">0</strong></div>
+        </div>
+    </div>
+
+    <div class="podium-roll" id="recent-achiever">SYNCING LATEST MEDAL...</div>
+
+    <script>
+        const COUNTS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA35YvUF3vcnonTTI7Eh53EmiqWdrP_0Kcwwb0BRjmmLrzdsS7UHF8fGQtekliVVw1Z1SKj0P4eS2U/pub?gid=0&single=true&output=csv";
+        const MEDALISTS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA35YvUF3vcnonTTI7Eh53EmiqWdrP_0Kcwwb0BRjmmLrzdsS7UHF8fGQtekliVVw1Z1SKj0P4eS2U/pub?gid=1276195899&single=true&output=csv";
+
+        function triggerParty() {
+            document.getElementById('goal-horn').play().catch(()=>{});
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#FF0000', '#FFFFFF', '#FFD700'] });
+        }
+
+        async function updateDashboard() {
+            const t = new Date().getTime();
+            
+            // 1. Update Counts
+            const resC = await fetch(`${COUNTS_URL}&t=${t}`);
+            const textC = await resC.text();
+            const rowsC = textC.split('\n').map(r => r.split(','));
+            const canada = rowsC.find(r => r[1] && r[1].includes("Canada"));
+            if(canada) {
+                document.getElementById('can-g').innerText = canada[2];
+                document.getElementById('can-s').innerText = canada[3];
+                document.getElementById('can-b').innerText = canada[4];
+                document.getElementById('can-t').innerText = parseInt(canada[2])+parseInt(canada[3])+parseInt(canada[4]);
+            }
+
+            // 2. Update Banner (Skip header, take Row 2)
+            const resM = await fetch(`${MEDALISTS_URL}&t=${t}`);
+            const textM = await resM.text();
+            const rowsM = textM.split('\n');
+            if(rowsM.length > 1) {
+                const latest = rowsM[1].split(',');
+                const medal = latest[2].replace(/"/g, "").toLowerCase();
+                const emoji = medal.includes("gold") ? "🥇" : medal.includes("silver") ? "🥈" : "🥉";
+                document.getElementById('recent-achiever').innerHTML = 
+                    `RECENT: ${latest[0].replace(/"/g, "")} (${latest[1].replace(/"/g, "")}) - ${medal.toUpperCase()} ${emoji}`;
+            }
+        }
+
+        document.addEventListener('click', () => { document.getElementById('goal-horn').load(); }, {once:true});
+        updateDashboard();
+        setInterval(updateDashboard, 60000);
+    </script>
+</body>
+</html>
